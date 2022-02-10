@@ -12,11 +12,12 @@ namespace Homework_6
         
         static void Main(string[] args)        
         {            
+
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Menu();
         }
 
-        static void ReadingFile()
+        static void ReadFile()
         {
             Console.Clear();
             string path = "db.txt";
@@ -38,7 +39,6 @@ namespace Homework_6
                                           $"\t{data[4]}" +
                                           $"\t{data[5]}" +
                                           $"\t{data[6]}");
-
                     }
                 }
             }
@@ -52,24 +52,12 @@ namespace Homework_6
             Console.ReadKey();
         }
 
-        static void WritingFile()
+        static void WriteFile()
         {
-            string path = "db.txt";
-            int id = 1;
             Console.Clear();
 
-            if (File.Exists(path) == true)
-            {
-                using (StreamReader sr = new StreamReader(path, Encoding.Unicode))
-                {
-                    string line;
-                    while ((line = sr.ReadLine()) != null)
-                    {
-                        id++;
-                    }
-                }
-            }
-
+            string path = "db.txt";
+            int id = NumberId(path);
             using (StreamWriter sw = new StreamWriter(path, true, Encoding.Unicode))
             {
                 char key = 'д';
@@ -77,6 +65,7 @@ namespace Homework_6
                 do
                 {
                     Console.Clear();
+
                     string note = string.Empty;
                     note += $"{id}#";
                     id++;
@@ -119,11 +108,11 @@ namespace Homework_6
                 switch (Console.ReadLine())
                 {
                     case "1":
-                        ReadingFile();
+                        ReadFile();
                         break;
 
                     case "2":
-                        WritingFile();
+                        WriteFile();
                         break;
 
                     case "0":
@@ -133,6 +122,23 @@ namespace Homework_6
                         break;
                 }
             }
+        }
+
+        static int NumberId(string path)
+        {
+            int id = 1;
+            if (File.Exists(path) == true)
+            {
+                using (StreamReader sr = new StreamReader(path, Encoding.Unicode))
+                {
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        id++;
+                    }
+                }
+            }
+            return id;
         }
     }
 }
