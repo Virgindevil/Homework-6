@@ -47,8 +47,7 @@ namespace Homework_6
                 Console.WriteLine("\t\t\t6 — редактировать запись с определённым ID в рабочем файле. ");
                 Console.WriteLine("\t\t\t7 — показать данные из рабочего файла в интервале дат. ");
                 Console.WriteLine("\t\t\t8 — сортировать данные по дате из рабочего файла на экране. (убывание и возрастание) ");
-                Console.WriteLine("\t\t\t0 - выход.");
-                Console.WriteLine(NumberId());
+                Console.WriteLine("\t\t\t0 - выход.");                
                 Console.Write("\n\t\t\t\t\t\t");
                 switch (Console.ReadLine())
                 {
