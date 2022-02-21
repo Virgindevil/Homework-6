@@ -371,21 +371,7 @@ namespace Homework_6
 
         #region Второстепенные методы
 
-        public void Add(Worker ConcreteWorker)
-        {
-            if (File.Exists(path)!=true)
-            {
-                this.workers[index] = ConcreteWorker;
-                this.index++;
-            }
-            else if (index >= this.workers.Length)
-            {
-                Array.Resize(ref this.workers, NumberId() +1);
-                this.workers[index] = ConcreteWorker;
-                this.index++;
-            }
-        }
-
+       
         public int NumberId()
         {
             int idcount = 0;
