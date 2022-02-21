@@ -16,7 +16,8 @@ namespace Homework_6
         int index; // текущий элемент для добавления в workers
         string[] titles; // массив, храняий заголовки полей. используется в PrintDbToConsole
         public List<Worker> worker;
-
+        bool LoadCheck = true;
+        
         #endregion
 
         #region Конструктор
@@ -27,9 +28,8 @@ namespace Homework_6
             titles = new string[]                   // Инициализируем заголовки
             {"ID"," Время"," ФИО"," Возраст","Рост", "Дата рождения","Место рождения"};        
             this.workers = new Worker[1]; // инициализаия массива сотрудников.   
-            this.worker = workers.ToList();
+            this.worker = workers.ToList();           
 
-            NumberId();
         }
         #endregion
 
@@ -47,7 +47,7 @@ namespace Homework_6
                 Console.WriteLine("\t\t\t6 — редактировать запись с определённым ID в рабочем файле. ");
                 Console.WriteLine("\t\t\t7 — показать данные из рабочего файла в интервале дат. ");
                 Console.WriteLine("\t\t\t8 — сортировать данные по дате из рабочего файла на экране. (убывание и возрастание) ");
-                Console.WriteLine("\t\t\t0 - выход.");                
+                Console.WriteLine("\t\t\t0 - выход.");                              
                 Console.Write("\n\t\t\t\t\t\t");
                 switch (Console.ReadLine())
                 {
@@ -149,32 +149,8 @@ namespace Homework_6
             Console.Clear();
             if (File.Exists(path) == true)
             {
-                using (StreamReader sr = new StreamReader(path, Encoding.Unicode))
-                {
-                    string line;
-
-                    Console.WriteLine($"{titles[0]}" +
-                                  $" {titles[1],15}" +
-                                  $" {titles[2],20}" +
-                                  $" {titles[3],20}" +
-                                  $" \t{titles[4]}" +
-                                  $" \t{titles[5],5}" +
-                                  $" \t{titles[6],5}\n");                    
-                    while ((line = sr.ReadLine()) != null)
-                    {
-                        string[] data = line.Split('#');
-                        Console.WriteLine($" {data[0]}" +
-                                          $"  {data[1]}" +
-                                          $"  {data[2]}" +
-                                          $"\t{data[3]}" +
-                                          $"\t{data[4]}" +
-                                          $"\t{data[5]}" +
-                                          $"\t{data[6]}");
-                    }
-                }
-
-                Console.WriteLine("\nДля выхода в меню нажмите любую клавишу...");
-                Console.ReadKey();
+                Load();
+                PrintWorker();
             }
 
             else
@@ -185,36 +161,57 @@ namespace Homework_6
         public void AddPerson()
         {
             Console.Clear();
-            
-            Worker temp = new Worker();      // Создание временной переменной
-            if (index < NumberId())
+            if (File.Exists(path) != true)
             {
-                index = NumberId();
+                worker.Clear();
+            }
+            else
+            {
+                if (LoadCheck == true)
+                {
+                    Load();
+                    LoadCheck = false;
+                }
             }            
+            //Worker temp = new Worker();      // Создание временной переменной                     
+            
 
             char key = 'д';
             do
             {
                 Console.Clear();
-                temp.ID = $"{index + 1}#";
-                temp.Date = $"{DateTime.Now}#";
-
+                string ID = $"{NumberId()+1}";
+                string Date = $"{DateTime.Now}";
                 Console.Write("Введите фамилию имя отчество: ");
-                temp.Name = $"{Console.ReadLine()}#";
-
+                string Name = $"{Console.ReadLine()}";
                 Console.Write("Введите возраст: ");
-                temp.Age = $"{Console.ReadLine()}#";
-
+                string Age = $"{Console.ReadLine()}";
                 Console.Write("Введите рост: ");
-                temp.Height = $"{Console.ReadLine()}#";
-
+                string Height = $"{Console.ReadLine()}";
                 Console.Write("Введите дату рождения: ");
-                temp.Dbirth = $"{Console.ReadLine()}#";
-
+                string Dbirth = $"{Console.ReadLine()}";
                 Console.Write("Введите место рождения: ");
-                temp.Pbirth = $"{Console.ReadLine()}";
+                string Pbirth = $"{Console.ReadLine()}";
 
-                Add(temp);
+                //temp.ID = $"{NumberId() + 1}#";
+                //temp.Date = $"{DateTime.Now}#";
+
+                //Console.Write("Введите фамилию имя отчество: ");
+                //temp.Name = $"{Console.ReadLine()}#";
+
+                //Console.Write("Введите возраст: ");
+                //temp.Age = $"{Console.ReadLine()}#";
+
+                //Console.Write("Введите рост: ");
+                //temp.Height = $"{Console.ReadLine()}#";
+
+                //Console.Write("Введите дату рождения: ");
+                //temp.Dbirth = $"{Console.ReadLine()}#";
+
+                //Console.Write("Введите место рождения: ");
+                //temp.Pbirth = $"{Console.ReadLine()}";
+
+                AddItem(ID, Date, Name, Age, Height, Dbirth, Pbirth);
                 SaveNewPerson();
                 
                 Console.Write("Продожить н/д"); key = Console.ReadKey(true).KeyChar;
@@ -223,36 +220,30 @@ namespace Homework_6
         }
         public void SortID(string idnumber)
         {
+            Load();
             int id = int.Parse(idnumber);
+            int j = 0;
             if (id <= NumberId() && id > 0)
-            {
-                using (StreamReader sr = new StreamReader(path, Encoding.Unicode))
+            {                
+                for (int i = 0; i < worker.Count; i++)
                 {
-                    string line;
-                    int i = 0;
-                    while ((line = sr.ReadLine()) != null)
+                    Console.Clear();
+                    Console.WriteLine($"{titles[0]}" +
+                        $" {titles[1],15}" +
+                        $" {titles[2],20}" +
+                        $" {titles[3],20}" +
+                        $" \t{titles[4]}" +
+                        $" \t{titles[5],5}" +
+                        $" \t{titles[6],5}\n");
+                    Console.WriteLine(worker[i].Print());
+                    j++;
+                    if (j == id)
                     {
-                        Console.Clear();
-                        Console.WriteLine($"{"ID"} {" Время",15} {" ФИО",20} {" Возраст",20} {"\tРост"} {"\tДата рождения",5} {"\tМесто рождения",5}");
-                        Console.WriteLine();
-                        string[] data = line.Split('#');
-                        Console.WriteLine($" {data[0]}" +
-                                          $"  {data[1]}" +
-                                          $"  {data[2]}" +
-                                          $"\t{data[3]}" +
-                                          $"\t{data[4]}" +
-                                          $"\t{data[5]}" +
-                                          $"\t{data[6]}");
-                        i++;
-                        if (i == id)
-                        {
-                            Console.WriteLine("\nДля выхода в меню нажмите любую клавишу...");
-                            Console.ReadKey();
-                            break;
-                        }
+                        Console.WriteLine("\nДля выхода в меню нажмите любую клавишу...");
+                        Console.ReadKey();
+                        break;
                     }
                 }
-            
             }
             else
             {
@@ -316,7 +307,7 @@ namespace Homework_6
                 temp.Pbirth = $"{Console.ReadLine()}";
 
                 worker[id - 1] = temp;
-                SaveChangeId();
+                SaveNewPerson();
             }
             else
             {
@@ -330,11 +321,10 @@ namespace Homework_6
             DateTime endDate = Convert.ToDateTime(date2);
 
             using (StreamReader sr = new StreamReader(path))
-            {
-                string line;
-                while ((line = sr.ReadLine()) != null)
+            {                
+                while (!sr.EndOfStream)
                 {
-                    string[] data = line.Split('#');
+                    string[] data = sr.ReadLine().Split('#');
                     DateTime data1 = Convert.ToDateTime(data[1]);
 
                     if (data1 >= startDate && data1 <= endDate)               // Проверка на заданный диапазон дат
@@ -359,26 +349,14 @@ namespace Homework_6
             switch (Console.ReadLine())
             {
                 case "1":
-                    worker = worker.OrderByDescending(e => e.Date)
-                        .ThenBy(e => e.ID)
-                        .ThenBy(e => e.Name)
-                        .ThenBy(e => e.Age)
-                        .ThenBy(e => e.Height)
-                        .ThenBy(e => e.Dbirth)
-                        .ThenBy(e => e.Pbirth)
+                    worker = worker.OrderByDescending(e => e.Date)                        
                         .ToList();
 
                     PrintWorker();
                     break;
 
                 case "2":
-                    worker = worker.OrderBy(e => e.Date)
-                        .ThenBy(e => e.ID)
-                        .ThenBy(e => e.Name)
-                        .ThenBy(e => e.Age)
-                        .ThenBy(e => e.Height)
-                        .ThenBy(e => e.Dbirth)
-                        .ThenBy(e => e.Pbirth)
+                    worker = worker.OrderBy(e => e.Date)                        
                         .ToList();
 
                     PrintWorker();
@@ -411,17 +389,10 @@ namespace Homework_6
         public int NumberId()
         {
             int idcount = 0;
-            if (File.Exists(this.path) == true)
+            for (int j = 0; j < worker.Count; j++)
             {
-                using (StreamReader sr = new StreamReader(this.path, Encoding.Unicode))
-                {
-                    string line;
-                    while ((line = sr.ReadLine()) != null)
-                    {
-                        idcount++;
-                    }
-                }
-            }
+                idcount++;
+            }             
             return idcount;
         }
 
@@ -437,21 +408,28 @@ namespace Homework_6
             worker.Add(contentLine);
         }
 
+        public void AddItem(params string[] data)
+        {
+            AddLine(new Worker(data[0], data[1], data[2], data[3], data[4], data[5], data[6]));
+        }
+
         public void SaveNewPerson()
         {
-            int i = NumberId();
-            using (StreamWriter sw = new StreamWriter(path, true, Encoding.Unicode))
-            {
-                string temp = String.Format("{0}{1}{2}{3}{4}{5}{6}",
-                                                this.workers[i].ID,
-                                                this.workers[i].Date,
-                                                this.workers[i].Name,
-                                                this.workers[i].Age,
-                                                this.workers[i].Height,
-                                                this.workers[i].Dbirth,
-                                                this.workers[i].Pbirth);
-                sw.WriteLine(temp);
+            File.Delete(path);
+
+            for (int i = 0; i < NumberId(); i++)               // Сохраняем тело файла
+                {
+                    string temp = String.Format("{0}#{1}#{2}#{3}#{4}#{5}#{6}",
+                                                    this.worker[i].ID,
+                                                    this.worker[i].Date,
+                                                    this.worker[i].Name,
+                                                    this.worker[i].Age,
+                                                    this.worker[i].Height,
+                                                    this.worker[i].Dbirth,
+                                                    this.worker[i].Pbirth);
+                File.AppendAllText(path, $"{temp}\n");
             }
+            
         }
 
         public void Load()
@@ -461,10 +439,10 @@ namespace Homework_6
 
             using (StreamReader sr = new StreamReader(path))
             {
-                string line;
-                while ((line = sr.ReadLine()) != null)
+                //string line;
+                while (!sr.EndOfStream)
                 {
-                    string[] data = line.Split('#');
+                    string[] data = sr.ReadLine().Split('#');
                     AddLine(new Worker(data[0], data[1], data[2], data[3], data[4], data[5], data[6]));
                 }
             }
@@ -487,25 +465,7 @@ namespace Homework_6
             Console.WriteLine("\nДля выхода в меню нажмите любую клавишу...");
             Console.ReadKey();
         }
-        public void SaveChangeId()
-        {
-            File.Delete(path);              // Удаляем старый файл
-            using (StreamWriter sw = new StreamWriter(path, true, Encoding.Unicode))
-            {
-                for (int i = 0; i < worker.Count; i++)               // Сохраняем тело файла
-                {
-                    string temp = String.Format("{0}#{1}#{2}#{3}#{4}#{5}#{6}",
-                                                    this.worker[i].ID,
-                                                    this.worker[i].Date,
-                                                    this.worker[i].Name,
-                                                    this.worker[i].Age,
-                                                    this.worker[i].Height,
-                                                    this.worker[i].Dbirth,
-                                                    this.worker[i].Pbirth);
-                    sw.WriteLine(temp);
-                }
-            }
-        }
+        
 
         #endregion
 
