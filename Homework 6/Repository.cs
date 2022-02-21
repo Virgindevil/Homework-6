@@ -10,12 +10,10 @@ namespace Homework_6
     class Repository
     {
         #region Поля
-
-        private Worker[] workers; // Основной массив для хранения данных
-        private string path; // путь к файлу с данными
-        int index; // текущий элемент для добавления в workers
+                
+        private string path; // путь к файлу с данными        
         string[] titles; // массив, храняий заголовки полей. используется в PrintDbToConsole
-        public List<Worker> worker;
+        public List<Worker> worker ;
         bool LoadCheck = true;
         
         #endregion
@@ -23,12 +21,10 @@ namespace Homework_6
         #region Конструктор
         public Repository(string Path)
         {
-            path = Path; // Сохранение пути к файлу с данными
-            this.index = 0; // текущая позиция для добавления сотрудника в workers
+            path = Path; // Сохранение пути к файлу с данными            
             titles = new string[]                   // Инициализируем заголовки
-            {"ID"," Время"," ФИО"," Возраст","Рост", "Дата рождения","Место рождения"};        
-            this.workers = new Worker[1]; // инициализаия массива сотрудников.   
-            this.worker = workers.ToList();           
+            {"ID"," Время"," ФИО"," Возраст","Рост", "Дата рождения","Место рождения"};      
+            this.worker = new List<Worker>();           
 
         }
         #endregion
@@ -173,7 +169,7 @@ namespace Homework_6
                     LoadCheck = false;
                 }
             }            
-            //Worker temp = new Worker();      // Создание временной переменной                     
+                             
             
 
             char key = 'д';
@@ -192,24 +188,6 @@ namespace Homework_6
                 string Dbirth = $"{Console.ReadLine()}";
                 Console.Write("Введите место рождения: ");
                 string Pbirth = $"{Console.ReadLine()}";
-
-                //temp.ID = $"{NumberId() + 1}#";
-                //temp.Date = $"{DateTime.Now}#";
-
-                //Console.Write("Введите фамилию имя отчество: ");
-                //temp.Name = $"{Console.ReadLine()}#";
-
-                //Console.Write("Введите возраст: ");
-                //temp.Age = $"{Console.ReadLine()}#";
-
-                //Console.Write("Введите рост: ");
-                //temp.Height = $"{Console.ReadLine()}#";
-
-                //Console.Write("Введите дату рождения: ");
-                //temp.Dbirth = $"{Console.ReadLine()}#";
-
-                //Console.Write("Введите место рождения: ");
-                //temp.Pbirth = $"{Console.ReadLine()}";
 
                 AddItem(ID, Date, Name, Age, Height, Dbirth, Pbirth);
                 SaveNewPerson();
@@ -371,7 +349,7 @@ namespace Homework_6
 
         #region Второстепенные методы
 
-       
+
         public int NumberId()
         {
             int idcount = 0;
