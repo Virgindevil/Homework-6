@@ -13,9 +13,9 @@ namespace Homework_6
                 
         private string path; // путь к файлу с данными        
         string[] titles; // массив, храняий заголовки полей. используется в PrintDbToConsole
-        public List<Worker> worker ;
-        bool LoadCheck = true;
+        public List<Worker> worker;
         
+
         #endregion
 
         #region Конструктор
@@ -24,9 +24,8 @@ namespace Homework_6
             path = Path; // Сохранение пути к файлу с данными            
             titles = new string[]                   // Инициализируем заголовки
             {"ID"," Время"," ФИО"," Возраст","Рост", "Дата рождения","Место рождения"};      
-            this.worker = new List<Worker>();           
-
-        }
+            this.worker = new List<Worker>();
+        }  
         #endregion
 
         #region Меню
@@ -34,6 +33,10 @@ namespace Homework_6
         {
             while (true)
             {
+                if (File.Exists(path))
+                {
+                    Load();
+                }                
                 Console.Clear();
                 Console.WriteLine("\n\t\t\t1 — вывести данные рабочего файла на экран. ");
                 Console.WriteLine("\t\t\t2 — заполнить данные и добавить новую запись в конец рабочего файла. ");
@@ -56,7 +59,7 @@ namespace Homework_6
                         break;
 
                     case "3":
-                        if (File.Exists(path) == true)
+                        if (File.Exists(path))
                         {
                             Console.Clear();
                             Console.WriteLine("Введите ID:");
@@ -80,7 +83,7 @@ namespace Homework_6
                         break;
 
                     case "6":
-                        if (File.Exists(path) == true)
+                        if (File.Exists(path))
                         {
                             Console.Clear();
                             Console.WriteLine("Введите ID:");
@@ -95,7 +98,7 @@ namespace Homework_6
                         }
 
                     case "7":
-                        if (File.Exists(path) == true)
+                        if (File.Exists(path))
                         {
                             Console.Clear();
                             Console.WriteLine("Введите начальную дату для импорта(формат dd-mm-yyyy и/или 00:00):");
@@ -113,7 +116,7 @@ namespace Homework_6
                         }
 
                     case "8":
-                        if (File.Exists(path) == true)
+                        if (File.Exists(path))
                         {
                             Console.Clear();
                             DataSort();
@@ -140,12 +143,15 @@ namespace Homework_6
         #endregion
 
         #region Методы Меню
+
+        /// <summary>
+        /// выводит на экран записи из списка
+        /// </summary>
         public void ShowOnScreen()
         {
             Console.Clear();
-            if (File.Exists(path) == true)
-            {
-                Load();
+            if (File.Exists(path))
+            {                
                 PrintWorker();
             }
 
@@ -154,23 +160,17 @@ namespace Homework_6
                 DontExist();
             }
         }
+
+        /// <summary>
+        /// метод добавления записи с автосохранением в файл
+        /// </summary>
         public void AddPerson()
         {
             Console.Clear();
-            if (File.Exists(path) != true)
+            if (!File.Exists(path)) //Дополнительная проверка на записи в списке
             {
-                worker.Clear();
-            }
-            else
-            {
-                if (LoadCheck == true)
-                {
-                    Load();
-                    LoadCheck = false;
-                }
-            }            
-                             
-            
+                worker.Clear(); //отчистка списка, если в нём что-то есть, а файла нет
+            }  
 
             char key = 'д';
             do
@@ -196,9 +196,13 @@ namespace Homework_6
 
             } while (char.ToLower(key) == 'д');
         }
+
+        /// <summary>
+        /// сортировка по ID и вывод на экран нужной строки
+        /// </summary>
+        /// <param name="idnumber"></param>
         public void SortID(string idnumber)
         {
-            Load();
             int id = int.Parse(idnumber);
             int j = 0;
             if (id <= NumberId() && id > 0)
@@ -228,11 +232,15 @@ namespace Homework_6
                 Console.WriteLine("Неверно введён ID");
                 Console.ReadKey();
             }
-        }        
+        }
+
+        /// <summary>
+        /// скопировать рабочий файл (с заменой)
+        /// </summary> 
         public void CopyFile()
         {
             Console.Clear();
-            if (File.Exists(path) == true)
+            if (File.Exists(path))
             {
                 if (File.Exists("copyfile.txt") == true)
                 {
@@ -248,10 +256,14 @@ namespace Homework_6
                 DontExist();
             }
         }
+
+        /// <summary>
+        /// удаление рабочего файла
+        /// </summary>
         public void DelFile()
         {
             Console.Clear();
-            if (File.Exists(path) == true)
+            if (File.Exists(path))
             {
                 File.Delete(path);
                 Console.WriteLine("\nФайл удалён");
@@ -263,10 +275,37 @@ namespace Homework_6
                 DontExist();
             }
         }
+
+        /// <summary>
+        /// редактировать запись с нужным номером ID
+        /// </summary>
+        /// <param name="idnumber"></param>
         public void RedactByID(string idnumber)
         {
-            int id = int.Parse(idnumber);
-            Load();
+            int id = int.Parse(idnumber);            
+            int j = 0;
+            if (id <= NumberId() && id > 0)
+            {
+                for (int i = 0; i < worker.Count; i++)
+                {
+                    Console.Clear();
+                    Console.WriteLine($"{titles[0]}" +
+                        $" {titles[1],15}" +
+                        $" {titles[2],20}" +
+                        $" {titles[3],20}" +
+                        $" \t{titles[4]}" +
+                        $" \t{titles[5],5}" +
+                        $" \t{titles[6],5}\n");
+                    Console.WriteLine(worker[i].Print());
+                    j++;
+                    if (j == id)
+                    {
+                        Console.WriteLine("\nДанные до редактирования. \nНажмите любую клавишу для продолжения...");
+                        Console.ReadKey();
+                        break;
+                    }
+                }
+            }
             Console.Clear();
             if (id <= NumberId() && id > 0)
             {
@@ -293,6 +332,12 @@ namespace Homework_6
                 Console.ReadKey();
             }
         }
+
+        /// <summary>
+        /// вывод на экран записей в диапазоне между двумя датами
+        /// </summary>
+        /// <param name="date1">нижний диапазон</param>
+        /// <param name="date2">верхний диапазон</param>
         public void DataTimesSort(string date1, string date2)
         {
             DateTime startDate = Convert.ToDateTime(date1);
@@ -320,9 +365,12 @@ namespace Homework_6
             Console.WriteLine("\nДля выхода в меню нажмите любую клавишу...");
             Console.ReadKey();
         }
+
+        /// <summary>
+        /// сортировка записей по дате (убывание и возрастание)
+        /// </summary>
         public void DataSort()
         {
-            Load();
             Console.WriteLine("1 - В порядке убывания | 2 - В порядке возрастания");
             switch (Console.ReadLine())
             {
@@ -349,17 +397,23 @@ namespace Homework_6
 
         #region Второстепенные методы
 
-
+        /// <summary>
+        /// метод нахождения ID записи
+        /// </summary>
+        /// <returns></returns>
         public int NumberId()
         {
             int idcount = 0;
-            for (int j = 0; j < worker.Count; j++)
+            for (int j = 0; j < worker.Count; j++) // определяем число в зависомости от кол-ва записей в списке
             {
                 idcount++;
             }             
             return idcount;
         }
 
+        /// <summary>
+        /// строки если файл не существует
+        /// </summary>
         public void DontExist()
         {
             Console.WriteLine($"\nФайл ещё не был создан...");
@@ -367,16 +421,27 @@ namespace Homework_6
             Console.ReadKey();
         }
 
+        /// <summary>
+        /// метод добавления записи в список
+        /// </summary>
+        /// <param name="contentLine"></param>
         public void AddLine(Worker contentLine)
         {
             worker.Add(contentLine);
         }
 
+        /// <summary>
+        /// метод добавления данных сотрудника для внесения в список
+        /// </summary>
+        /// <param name="data"></param>
         public void AddItem(params string[] data)
         {
             AddLine(new Worker(data[0], data[1], data[2], data[3], data[4], data[5], data[6]));
         }
 
+        /// <summary>
+        /// сохранение записей в рабочий файл
+        /// </summary>
         public void SaveNewPerson()
         {
             File.Delete(path);
@@ -396,6 +461,9 @@ namespace Homework_6
             
         }
 
+        /// <summary>
+        /// загрузить данные из файла в список
+        /// </summary>
         public void Load()
         {
             //Очищаем список перед загрузкой нового файла
@@ -412,6 +480,9 @@ namespace Homework_6
             }
         }
 
+        /// <summary>
+        /// вывести на экран список с записями
+        /// </summary>
         public void PrintWorker()
         {
             Console.Clear();
