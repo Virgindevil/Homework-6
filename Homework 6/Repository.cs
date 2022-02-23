@@ -110,7 +110,7 @@ namespace Homework_6
                             string date1 = Console.ReadLine();
                             Console.WriteLine("Введите конечную дату для импорта(формат dd-mm-yyyy и/или 00:00):");
                             string date2 = Console.ReadLine();
-                            SortDataBetweenTwoTimes(date1, date2);
+                            ShowDataBetweenTwoTimes(date1, date2);
                             break;
                         }
                         else
@@ -173,16 +173,21 @@ namespace Homework_6
         public void CreateAndAddPerson()
         {
             Console.Clear();
+            int id = 0;
             if (!File.Exists(path)) //Дополнительная проверка на записи в списке
             {
                 worker.Clear(); //отчистка списка, если в нём что-то есть, а файла нет
-            }  
+            }
+            else
+            {
+                id = int.Parse(worker[worker.Count-1].ID);
+            }
 
             char key = 'д';
             do
             {
                 Console.Clear();
-                string ID = $"{worker.Count + 1}";
+                string ID = $"{id + 1}";
                 string Date = $"{DateTime.Now}";
                 Console.Write("Введите фамилию имя отчество: ");
                 string Name = $"{Console.ReadLine()}";
@@ -211,28 +216,19 @@ namespace Homework_6
         public void ShowIDLine(string idnumber)
         {
             int id = int.Parse(idnumber);
-            int j = 0;
             if (id <= worker.Count && id > 0)
-            {                
-                for (int i = 0; i < worker.Count; i++)
-                {
-                    Console.Clear();
-                    Console.WriteLine($"{titles[0]}" +
+            {
+                Console.Clear();
+                Console.WriteLine($"{titles[0]}" +
                         $" {titles[1],15}" +
                         $" {titles[2],20}" +
                         $" {titles[3],20}" +
                         $" \t{titles[4]}" +
                         $" \t{titles[5],5}" +
                         $" \t{titles[6],5}\n");
-                    Console.WriteLine(worker[i].Print());
-                    j++;
-                    if (j == id)
-                    {
-                        Console.WriteLine("\nДля выхода в меню нажмите любую клавишу...");
-                        Console.ReadKey();
-                        break;
-                    }
-                }
+                Console.WriteLine(worker[id-1].Print());
+                Console.WriteLine("\nНажмите любую клавишу для продолжения...");
+                Console.ReadKey();
             }
             else
             {
@@ -248,73 +244,47 @@ namespace Homework_6
        /// <param name="linenumber">номер строчки</param>
         public void DeleteLine(string linenumber)
         {
-            int id = 1;
-            int j = 0;
-            Worker newid = new Worker();
-            int line = int.Parse(linenumber);
-            if (line <= worker.Count)
+            for (int i = 0; i < worker.Count; i++)
             {
-                for (int i = 0; i < worker.Count; i++)
+                if (linenumber == worker[i].ID)
                 {
+
                     Console.Clear();
                     Console.WriteLine($"{titles[0]}" +
-                        $" {titles[1],15}" +
-                        $" {titles[2],20}" +
-                        $" {titles[3],20}" +
-                        $" \t{titles[4]}" +
-                        $" \t{titles[5],5}" +
-                        $" \t{titles[6],5}\n");
-                    Console.WriteLine(worker[i].Print());
-                    j++;
-                    if (j == line)
-                    {
-                        Console.WriteLine("\nДанная строчка будет удалена...");
+                            $" {titles[1],15}" +
+                            $" {titles[2],20}" +
+                            $" {titles[3],20}" +
+                            $" \t{titles[4]}" +
+                            $" \t{titles[5],5}" +
+                            $" \t{titles[6],5}\n");
 
-                        Console.ReadKey();
-                        break;
-                    }
-                }
+
+                    Console.WriteLine(worker[i].Print());
+                    Console.WriteLine("\nДанная строчка будет удалена...");
+                    Console.ReadKey();
+
                     Console.WriteLine("Вы хотите продолжить? 1 - да | 2 - нет");
                     switch (Console.ReadLine())
                     {
                         case "1":
-                            worker.RemoveAt(line - 1);
+                            worker.RemoveAt(i);
                             File.Delete(path);
-
-                            for (int i = 0; i < worker.Count; i++)               // Сохраняем тело файла
-                            {
-                                newid.ID = $"{id}";
-                                string temp = String.Format("{0}#{1}#{2}#{3}#{4}#{5}#{6}",
-                                                                newid.ID,
-                                                                this.worker[i].Date,
-                                                                this.worker[i].Name,
-                                                                this.worker[i].Age,
-                                                                this.worker[i].Height,
-                                                                this.worker[i].Dbirth,
-                                                                this.worker[i].Pbirth);
-                                id++;
-                                File.AppendAllText(path, $"{temp}\n");
-                            }
-
+                            SaveNewList();
                             Console.WriteLine("\nСтрочка удалена");
                             Console.ReadKey();
-                        break;
+                            return;
 
-                    case "2":
+                        case "2":
 
-                        break;
+                            return;
 
                         default:
-                            break;
+                            return;
                     }
-
-                    
+                }
             }
-            else
-            {
-                Console.WriteLine("Неверно введён ID");
-                Console.ReadKey();
-            }
+            Console.WriteLine("Неверно введён ID");
+            Console.ReadKey();
         }
 
 
@@ -324,29 +294,22 @@ namespace Homework_6
         /// <param name="idnumber"></param>
         public void RedactByIDNumber(string linenumber)
         {
-            int line = int.Parse(linenumber);            
-            int j = 0;
+            int line = int.Parse(linenumber);        
             if (line <= worker.Count && line > 0)
             {
-                for (int i = 0; i < worker.Count; i++)
-                {
-                    Console.Clear();
-                    Console.WriteLine($"{titles[0]}" +
+
+                Console.Clear();
+                Console.WriteLine($"{titles[0]}" +
                         $" {titles[1],15}" +
                         $" {titles[2],20}" +
                         $" {titles[3],20}" +
                         $" \t{titles[4]}" +
                         $" \t{titles[5],5}" +
                         $" \t{titles[6],5}\n");
-                    Console.WriteLine(worker[i].Print());
-                    j++;
-                    if (j == line)
-                    {
-                        Console.WriteLine("\nДанные до редактирования. \nНажмите любую клавишу для продолжения...");
-                        Console.ReadKey();
-                        break;
-                    }
-                }
+                Console.WriteLine(worker[line - 1].Print());
+                Console.WriteLine("\nДанные до редактирования\nНажмите любую клавишу для продолжения...");
+                Console.ReadKey();
+
             }
             Console.Clear();
             if (line <= worker.Count && line > 0)
@@ -381,7 +344,7 @@ namespace Homework_6
         /// </summary>
         /// <param name="date1">нижний диапазон</param>
         /// <param name="date2">верхний диапазон</param>
-        public void SortDataBetweenTwoTimes(string date1, string date2)
+        public void ShowDataBetweenTwoTimes(string date1, string date2)
         {
             DateTime startDate = Convert.ToDateTime(date1);
             DateTime endDate = Convert.ToDateTime(date2);
