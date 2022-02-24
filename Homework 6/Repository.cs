@@ -215,40 +215,10 @@ namespace Homework_6
         /// <param name="idnumber"></param>
         public void ShowIDLine(string idnumber)
         {
-            int id = int.Parse(idnumber);
-            if (id <= worker.Count && id > 0)
-            {
-                Console.Clear();
-                Console.WriteLine($"{titles[0]}" +
-                        $" {titles[1],15}" +
-                        $" {titles[2],20}" +
-                        $" {titles[3],20}" +
-                        $" \t{titles[4]}" +
-                        $" \t{titles[5],5}" +
-                        $" \t{titles[6],5}\n");
-                Console.WriteLine(worker[id-1].Print());
-                Console.WriteLine("\nНажмите любую клавишу для продолжения...");
-                Console.ReadKey();
-            }
-            else
-            {
-                Console.WriteLine("Неверно введён ID");
-                Console.ReadKey();
-            }
-        }       
-
-
-       /// <summary>
-       /// Удаляет строчку
-       /// </summary>
-       /// <param name="linenumber">номер строчки</param>
-        public void DeleteLine(string linenumber)
-        {
             for (int i = 0; i < worker.Count; i++)
             {
-                if (linenumber == worker[i].ID)
+                if (idnumber == worker[i].ID)
                 {
-
                     Console.Clear();
                     Console.WriteLine($"{titles[0]}" +
                             $" {titles[1],15}" +
@@ -258,6 +228,35 @@ namespace Homework_6
                             $" \t{titles[5],5}" +
                             $" \t{titles[6],5}\n");
 
+                    Console.WriteLine(worker[i].Print());
+                    Console.WriteLine("\nЗапрашиваемая строчка.\nДля продолжения нажмителюбую клавишу...");
+                    Console.ReadKey();
+                    return;
+                }
+            }
+            Console.WriteLine("Неверно введён ID");
+            Console.ReadKey();
+        }
+
+
+       /// <summary>
+       /// Удаляет строчку
+       /// </summary>
+       /// <param name="linenumber">номер строчки</param>
+        public void DeleteLine(string idnumber)
+        {
+            for (int i = 0; i < worker.Count; i++)
+            {
+                if (idnumber == worker[i].ID)
+                {
+                    Console.Clear();
+                    Console.WriteLine($"{titles[0]}" +
+                            $" {titles[1],15}" +
+                            $" {titles[2],20}" +
+                            $" {titles[3],20}" +
+                            $" \t{titles[4]}" +
+                            $" \t{titles[5],5}" +
+                            $" \t{titles[6],5}\n");
 
                     Console.WriteLine(worker[i].Print());
                     Console.WriteLine("\nДанная строчка будет удалена...");
@@ -292,50 +291,60 @@ namespace Homework_6
         /// редактировать запись с нужным номером ID
         /// </summary>
         /// <param name="idnumber"></param>
-        public void RedactByIDNumber(string linenumber)
+        public void RedactByIDNumber(string idnumber)
         {
-            int line = int.Parse(linenumber);        
-            if (line <= worker.Count && line > 0)
+            int id = int.Parse(idnumber);
+            for (int i = 0; i < worker.Count; i++)
             {
+                if (idnumber == worker[i].ID)
+                {
+                    Console.Clear();
+                    Console.WriteLine($"{titles[0]}" +
+                            $" {titles[1],15}" +
+                            $" {titles[2],20}" +
+                            $" {titles[3],20}" +
+                            $" \t{titles[4]}" +
+                            $" \t{titles[5],5}" +
+                            $" \t{titles[6],5}\n");
 
-                Console.Clear();
-                Console.WriteLine($"{titles[0]}" +
-                        $" {titles[1],15}" +
-                        $" {titles[2],20}" +
-                        $" {titles[3],20}" +
-                        $" \t{titles[4]}" +
-                        $" \t{titles[5],5}" +
-                        $" \t{titles[6],5}\n");
-                Console.WriteLine(worker[line - 1].Print());
-                Console.WriteLine("\nДанные до редактирования\nНажмите любую клавишу для продолжения...");
-                Console.ReadKey();
+                    Console.WriteLine(worker[i].Print());
+                    Console.WriteLine("\nИсходная строчка.");
+                    Console.WriteLine("Вы хотите продолжить? 1 - да | 2 - нет");
+                    switch (Console.ReadLine())
+                    {
+                        case "1":
+                            Console.Clear();
+                            Worker temp = new Worker();      // Создание временной переменной
+                            temp.ID = $"{id}";
+                            temp.Date = $"{DateTime.Now}";
+                            Console.Write("Введите новую фамилию имя отчество: ");
+                            temp.Name = $"{Console.ReadLine()}";
+                            Console.Write("Введите новый возраст: ");
+                            temp.Age = $"{Console.ReadLine()}";
+                            Console.Write("Введите новый рост: ");
+                            temp.Height = $"{Console.ReadLine()}";
+                            Console.Write("Введите новую дату рождения: ");
+                            temp.Dbirth = $"{Console.ReadLine()}";
+                            Console.Write("Введите новое место рождения: ");
+                            temp.Pbirth = $"{Console.ReadLine()}";
 
-            }
-            Console.Clear();
-            if (line <= worker.Count && line > 0)
-            {
-                Worker temp = new Worker();      // Создание временной переменной
-                temp.ID = $"{line}";
-                temp.Date = $"{DateTime.Now}";
-                Console.Write("Введите новую фамилию имя отчество: ");
-                temp.Name = $"{Console.ReadLine()}";
-                Console.Write("Введите новый возраст: ");
-                temp.Age = $"{Console.ReadLine()}";
-                Console.Write("Введите новый рост: ");
-                temp.Height = $"{Console.ReadLine()}";
-                Console.Write("Введите новую дату рождения: ");
-                temp.Dbirth = $"{Console.ReadLine()}";
-                Console.Write("Введите новое место рождения: ");
-                temp.Pbirth = $"{Console.ReadLine()}";
+                            worker[i] = temp;
+                            SaveNewList();
+                            return;
 
-                worker[line - 1] = temp;
-                SaveNewList();
+                        case "2":
+
+                            return;
+
+                        default:
+                            return;
+                    }
+                }
             }
-            else
-            {
-                Console.WriteLine("Неверно введён ID");
-                Console.ReadKey();
-            }
+
+            Console.WriteLine("Неверно введён ID");
+            Console.ReadKey();
+
         }
 
 
